@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Efe Panel Giriş 🔐</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        body { background: #0f172a; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; }
+        .login-card { animation: fadeIn 1s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+    </style>
+</head>
+<body>
+    <div class="login-card bg-slate-800 p-10 rounded-[2.5rem] shadow-2xl border border-slate-700 w-full max-w-md text-center">
+        <div class="mb-8">
+            <div class="w-20 h-20 bg-indigo-600 rounded-2xl mx-auto flex items-center justify-center text-4xl shadow-lg shadow-indigo-500/20">🔐</div>
+            <h2 class="text-white text-3xl font-black mt-4 italic">Efe Admin Panel</h2>
+            <p class="text-slate-400 mt-2 font-medium">Lütfen yetkili girişi yapınız</p>
+        </div>
+        <div class="space-y-4">
+            <input type="text" id="user" placeholder="Kullanıcı Adı" class="w-full p-4 bg-slate-900 border-none rounded-2xl outline-none focus:ring-4 focus:ring-indigo-500/20 text-white transition">
+            <input type="password" id="pass" placeholder="Şifre" class="w-full p-4 bg-slate-900 border-none rounded-2xl outline-none focus:ring-4 focus:ring-indigo-500/20 text-white transition">
+            <button onclick="girisYap()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 rounded-2xl shadow-xl transition active:scale-95 mt-4">Giriş Yap</button>
+        </div>
+    </div>
+
+    <script>
+        async function girisYap() {
+            const username = document.getElementById('user').value;
+            const password = document.getElementById('pass').value;
+
+            const res = await fetch('http://localhost:3000/api/login', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ username, password })
+            });
+
+            const data = await res.json();
+            if (data.login) {
+                localStorage.setItem('adminKey', 'EFE_PRO_SECRET'); // Giriş anahtarı
+                Swal.fire({ icon: 'success', title: 'Başarılı!', text: 'Yönetim paneline aktarılıyorsunuz...', timer: 1500, showConfirmButton: false });
+                setTimeout(() => window.location.href = 'index.html', 1500);
+            } else {
+                Swal.fire('Hata', data.hata, 'error');
+            }
+        }
+    </script>
+</body>
+</html>
